@@ -165,17 +165,6 @@ class Triangle():
 class TriangleMesh:
 
     def __init__(self):
-
-        # self.originalPositions = (
-        #     pyrr.vector4.create(-0.5, -0.5, 0.0, 1.0, dtype=np.float32),
-        #     pyrr.vector4.create( 0.5, -0.5, 0.0, 1.0, dtype=np.float32),
-        #     pyrr.vector4.create( 0.0,  0.5, 0.0, 1.0, dtype=np.float32)
-        # )
-        # self.originalColors = (
-        #     pyrr.vector3.create(1.0, 0.0, 0.0, dtype=np.float32),
-        #     pyrr.vector3.create(0.0, 1.0, 0.0, dtype=np.float32),
-        #     pyrr.vector3.create(0.0, 0.0, 1.0, dtype=np.float32)
-        # )
         
         self.originalPosition = (
             pyrr.vector4.create(-0.5, -0.5, 0.0, 1.0, dtype=np.float32),
