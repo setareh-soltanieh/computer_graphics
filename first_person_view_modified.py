@@ -292,7 +292,7 @@ class App:
         if pose is None:
             pose = np.array([0, 0, 0], np.float32)
         else:
-            pose += np.array([0.0001, 0, 0], np.float32)
+            pose += np.array([0, 0, 0.001], np.float32)
         
         self.scene.move_camera(pose)
 
@@ -302,54 +302,6 @@ class App:
             ori += np.array([0, 0, 0], np.float32)
 
         self.scene.spin_camera(ori)
-
-    def handleKeys(self) -> None:
-
-        combo = 0
-        directionModifier = 0
-
-        if glfw.get_key(
-            self.window, GLFW_CONSTANTS.GLFW_KEY_W
-            ) == GLFW_CONSTANTS.GLFW_PRESS:
-            combo += 1
-        elif glfw.get_key(
-            self.window, GLFW_CONSTANTS.GLFW_KEY_A
-            ) == GLFW_CONSTANTS.GLFW_PRESS:
-            combo += 2
-        elif glfw.get_key(
-            self.window, GLFW_CONSTANTS.GLFW_KEY_S
-            ) == GLFW_CONSTANTS.GLFW_PRESS:
-            combo += 4
-        elif glfw.get_key(
-            self.window, GLFW_CONSTANTS.GLFW_KEY_D
-            ) == GLFW_CONSTANTS.GLFW_PRESS:
-            combo += 8
-        
-        if combo in self.walk_offset_lookup:
-            
-            directionModifier = self.walk_offset_lookup[combo]
-            rate = self.frameTime / 16.667
-            
-            dPos = 0.1 * rate * np.array(
-                [
-                    np.cos(np.deg2rad(self.scene.camera.eulers[2] + directionModifier)),
-                    np.sin(np.deg2rad(self.scene.camera.eulers[2] + directionModifier)),
-                    0
-                ],
-                dtype = np.float32
-            )
-
-            self.scene.move_camera(dPos)
-
-    def handleMouse(self) -> None:
-
-        (x,y) = glfw.get_cursor_pos(self.window)
-        rate = self.frameTime / 16.667
-        theta_increment = rate * ((self.screenWidth / 2.0) - x)
-        phi_increment = rate * ((self.screenHeight / 2.0) - y)
-        dEulers = np.array([0, phi_increment, theta_increment], dtype=np.float32)
-        self.scene.spin_camera(dEulers)
-        glfw.set_cursor_pos(self.window, self.screenWidth // 2, self.screenHeight // 2)
     
     def calcuateFramerate(self) -> None:
         """
