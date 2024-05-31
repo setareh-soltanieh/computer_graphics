@@ -1,3 +1,5 @@
+# Note: this code will visualize an image in the background of the window and visualize an .obj model in front of it
+
 import glfw
 import glfw.GLFW as GLFW_CONSTANTS
 from OpenGL.GL import *
@@ -96,6 +98,7 @@ class Entity:
         return model_transform
 
 class Triangle(Entity):
+
     def update(self, rate: float) -> None:
         self.eulers[2] += rate * 0.25
         if self.eulers[2] > 360:
@@ -137,7 +140,7 @@ class Camera(Entity):
 class Scene:
     def __init__(self):
         self.triangle = Triangle(
-            position=[5, 0, 0],
+            position=[10, 0, 0],
             eulers=[0, 0, 90]
         )
         self.camera = Camera(
@@ -239,7 +242,7 @@ class App:
     def make_assets(self) -> None:
         self.scene = Scene()
         # self.triangle_mesh = TriangleMesh()
-        self.triangle_mesh = Mesh("models/cube.obj", scale=0.5)
+        self.triangle_mesh = Mesh("models/indoor plant_02.obj", scale=0.5)
         self.triangle_shader = createShader(triangle_vertex_shader_source, triangle_fragment_shader_source)
 
     def set_onetime_uniforms(self) -> None:
@@ -393,7 +396,6 @@ class Mesh:
                 words = line.split(" ")
                 if words[0] == "v":
                     v.append(self.read_vertex_data(words))
-                    print(self.read_vertex_data(words))
                 elif words[0] == "vt":
                     vt.append(self.read_texcoord_data(words))
                 elif words[0] == "vn":
