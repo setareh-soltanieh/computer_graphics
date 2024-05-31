@@ -1,3 +1,5 @@
+# This code is for changing the first person's camera view with direct inputs
+
 import glfw
 import glfw.GLFW as GLFW_CONSTANTS
 from OpenGL.GL import *

@@ -1,3 +1,5 @@
+# This code is the code that just initializes a glfw window 
+
 import glfw
 import glfw.GLFW as GLFW_CONSTANTS
 from OpenGL.GL import *

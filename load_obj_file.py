@@ -1,3 +1,5 @@
+# This code is our initial code for loading a .obj file in our window
+
 import glfw
 import glfw.GLFW as GLFW_CONSTANTS
 from OpenGL.GL import *
