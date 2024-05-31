@@ -367,7 +367,7 @@ class Mesh:
                 
                 words = line.split(" ")
                 if words[0] == "v":
-                    v.append(self.read_vertex_data(words))
+                    v.append(self.read_vertex_data(words))                    
                 elif words[0] == "vt":
                     vt.append(self.read_texcoord_data(words))
                 elif words[0] == "vn":
@@ -380,11 +380,18 @@ class Mesh:
     
     def read_vertex_data(self, words):
         
-        return [
-            float(words[1]), 
-            float(words[2]),
-            float(words[3])
-        ]
+        if words[1] == "":
+            return [
+            float(words[2]), 
+            float(words[3]),
+            float(words[4])
+            ]
+        else:
+            return [
+                float(words[1]), 
+                float(words[2]),
+                float(words[3])
+            ]
 
     def read_texcoord_data(self, words):
         
