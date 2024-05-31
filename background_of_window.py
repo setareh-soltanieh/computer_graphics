@@ -137,7 +137,7 @@ class Camera(Entity):
 class Scene:
     def __init__(self):
         self.triangle = Triangle(
-            position=[3, 0, 0],
+            position=[5, 0, 0],
             eulers=[0, 0, 90]
         )
         self.camera = Camera(
@@ -238,7 +238,8 @@ class App:
 
     def make_assets(self) -> None:
         self.scene = Scene()
-        self.triangle_mesh = TriangleMesh()
+        # self.triangle_mesh = TriangleMesh()
+        self.triangle_mesh = Mesh("models/cube.obj", scale=0.5)
         self.triangle_shader = createShader(triangle_vertex_shader_source, triangle_fragment_shader_source)
 
     def set_onetime_uniforms(self) -> None:
@@ -348,6 +349,108 @@ class App:
         glDeleteTextures([self.texture_id])
         glfw.terminate()
 
+class Mesh: 
+
+    def __init__(self, filename, scale=1.0):
+
+        self.scale = scale
+        # x, y, z, s, t, nx, ny, nz
+        vertices = self.loadMesh(filename)
+
+        self.vertex_count = len(vertices) // 8
+        
+        # vertices must be in float32 format
+        vertices = np.array(vertices, dtype=np.float32)
+
+        self.vao = glGenVertexArrays(1)
+        glBindVertexArray(self.vao)
+        
+        # Vertices
+        self.vbo = glGenBuffers(1)
+        glBindBuffer(GL_ARRAY_BUFFER, self.vbo)
+        glBufferData(GL_ARRAY_BUFFER, vertices.nbytes, vertices, GL_STATIC_DRAW)
+        # Position
+        glEnableVertexAttribArray(0)
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 32, ctypes.c_void_p(0))
+        # texture
+        glEnableVertexAttribArray(1)
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 32, ctypes.c_void_p(12))
+
+    def loadMesh(self, filename: str):
+
+        v = []
+        vt = []
+        vn = []
+
+        vertices = []
+
+        with open(filename, "r") as file:
+
+            line = file.readline()
+
+            while line: 
+                
+                words = line.split(" ")
+                if words[0] == "v":
+                    v.append(self.read_vertex_data(words))
+                    print(self.read_vertex_data(words))
+                elif words[0] == "vt":
+                    vt.append(self.read_texcoord_data(words))
+                elif words[0] == "vn":
+                    vn.append(self.read_normal_data(words))
+                elif words[0] == "f":
+                    self.read_face_data(words, v, vt, vn, vertices)
+                line = file.readline()
+        
+        return vertices
+    
+    def read_vertex_data(self, words):
+        
+        return [
+            float(words[1])*self.scale, 
+            float(words[2])*self.scale,
+            float(words[3])*self.scale
+        ]
+
+    def read_texcoord_data(self, words):
+        
+        return [
+            float(words[1]), 
+            float(words[2])
+        ]
+    
+    def read_normal_data(self, words):
+        
+        return [
+            float(words[1]), 
+            float(words[2]),
+            float(words[3])
+        ]
+
+    def read_face_data(self, words, v, vt, vn, vertices):
+        
+        triangleCount = len(words) - 3
+
+        for i in range(triangleCount):
+
+            self.make_corner(words[1], v, vt, vn, vertices)
+            self.make_corner(words[2 + i], v, vt, vn, vertices)
+            self.make_corner(words[3 + i], v, vt, vn, vertices)
+
+    def make_corner(self, corner_description, v, vt, vn, vertices):
+
+        v_vt_vn = corner_description.split("/")
+        for element in v[int(v_vt_vn[0])-1]:
+            vertices.append(element)
+        for element in vt[int(v_vt_vn[1])-1]:
+            vertices.append(element)
+        for element in vn[int(v_vt_vn[2])-1]:
+            vertices.append(element)
+
+    def destroy(self):
+        glDeleteVertexArrays(1, (self.vao,))
+        glDeleteBuffers(1, (self.vbo,))
+        
 class TriangleMesh:
     def __init__(self):
         self.vertices = (
